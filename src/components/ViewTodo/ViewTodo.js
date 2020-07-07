@@ -6,7 +6,7 @@ import {FontAwesome5} from '@expo/vector-icons';
 export const ViewTodo = ({navigation, complete, edit, theme, item}) => {
 
     return (
-        <View>
+        <View style={{backgroundColor: 'white'}}>
             <ThemeImage theme={theme}/>
             <ScrollView style={styles.wrap}>
                 <Text style={{...styles.title, color: theme.textColor}}>

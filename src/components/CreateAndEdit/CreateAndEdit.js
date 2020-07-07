@@ -10,7 +10,7 @@ export const CreateAndEdit = ({
                               }) => {
 
     return (
-        <View>
+        <View style={{backgroundColor: 'white'}}>
             <ThemeImage theme={theme}/>
             <ScrollView style={styles.wrap}>
                 <View style={styles.container}>

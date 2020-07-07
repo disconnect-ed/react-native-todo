@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import {Alert} from 'react-native'
 import {CreateAndEdit} from "../components/CreateAndEdit/CreateAndEdit";
 import {useDispatch, useSelector} from "react-redux";
 import {updateTodo} from "../redux/actions/app-action";
@@ -34,6 +35,7 @@ export const EditScreen = ({navigation, theme}) => {
         todo.text = todoText
         todo.favorite = favorite
         todo.urgent = urgent
+        console.log(todo)
         dispatch(updateTodo(todo))
         return navigation.popToTop()
     }

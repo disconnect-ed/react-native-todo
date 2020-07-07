@@ -76,7 +76,7 @@ export const updateTodo = (todo) => {
         appAPI.updateTodo(todo).then(
             response => {
                 dispatch(setUpdateTodo(todo))
-                dispatch(setEditTodo(null))
+                // dispatch(setEditTodo(null))
             }
         )
     }
@@ -95,8 +95,9 @@ export const addTodo = (title, text, favorite, urgent) => {
     return dispatch => {
         appAPI.addTodo(newTodo).then(
             result => {
-                console.log(result)
                 dispatch(setTodo({...newTodo, id: result.data.name}))
+                dispatch(getFavoriteList())
+                dispatch(getUrgentList())
             },
             error => alert('При добавлении дела произошла ошибка!')
         )

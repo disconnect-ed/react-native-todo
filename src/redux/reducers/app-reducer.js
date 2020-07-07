@@ -62,8 +62,8 @@ export const appReducer = (state = initialState, action) => {
             return {
                 ...state,
                 allTodosList: action.todoList.reverse(),
-                favoriteList: action.todoList.filter(todo => todo.favorite),
-                urgentList: action.todoList.filter(todo => todo.urgent)
+                // favoriteList: action.todoList.filter(todo => todo.favorite),
+                // urgentList: action.todoList.filter(todo => todo.urgent)
             }
         case WATCH_TODO:
             const todoItem = state.allTodosList.find(todo => todo.id === action.todoId)

@@ -11,9 +11,9 @@ import {AddTodoButton} from "../components/AddTodoButton";
 import {EditScreen} from "../screens/EditScreen";
 import {CreateScreen} from "../screens/CreateScreen";
 import { CommonActions } from '@react-navigation/native';
+import {SearchScreen} from "../screens/SearchScreen";
 
 const addTodo = (props) => {
-    console.log(props)
     props.navigation.dispatch(
         CommonActions.reset({
             index: 1,
@@ -29,6 +29,18 @@ const addTodo = (props) => {
     )
     props.navigation.navigate('All')
 
+}
+
+const getTabBarVisibility = (route) => {
+    const routeName = route.state
+        ? route.state.routes[route.state.index].name
+        : '';
+
+    if (routeName === 'View' || routeName === 'Create' || routeName === 'Edit' || routeName === 'Search') {
+        return false;
+    }
+
+    return true;
 }
 
 const AllTodosStackScreen = React.memo(function AllTodosStackScreen({...props}) {
@@ -52,13 +64,17 @@ const AllTodosStackScreen = React.memo(function AllTodosStackScreen({...props}) 
                                   name='View'>
                 {props => <ViewTodoScreen {...props} theme={theme}/>}
             </AllTodosStack.Screen>
-            <AllTodosStack.Screen options={{title: 'Создание дела'}}
+            <AllTodosStack.Screen options={{title: 'Создание дела', tabBarVisible: false}}
                                   name='Create'>
                 {props => <CreateScreen {...props} theme={theme}/>}
             </AllTodosStack.Screen>
             <AllTodosStack.Screen options={{title: 'Редактирование дела'}}
                                   name='Edit'>
                 {props => <EditScreen {...props} theme={theme}/>}
+            </AllTodosStack.Screen>
+            <AllTodosStack.Screen options={{title: 'Поиск дела'}}
+                                  name='Search'>
+                {props => <SearchScreen {...props} theme={theme}/>}
             </AllTodosStack.Screen>
         </AllTodosStack.Navigator>
     )
@@ -142,18 +158,19 @@ export const AppNav = ({theme, ...props}) => {
                 tabBarOptions={{
                     activeTintColor: 'white',
                     inactiveTintColor: 'rgba(255, 255, 255, 0.3)',
+                    keyboardHidesTabBar: true,
                     style: {
                         backgroundColor: theme.textColor
                     }
                 }}
             >
-                <Tab.Screen name="All" options={{title: 'Все'}}>
+                <Tab.Screen name="All"  options={({route}) => ({title: 'Все', tabBarVisible: getTabBarVisibility(route)})}>
                     {props => <AllTodosStackScreen {...props} theme={theme}/>}
                 </Tab.Screen>
                 <Tab.Screen name="Favorite" options={{title: 'Избранные'}}>
                     {props => <FavoriteTodosStackScreen {...props} theme={theme}/>}
                 </Tab.Screen>
-                <Tab.Screen name="Urgent" options={{title: 'Срочные'}}>
+                <Tab.Screen name="Urgent" options={{title: 'Срочные', }}>
                     {props => <UrgentTodosStackScreen {...props} theme={theme}/>}
                 </Tab.Screen>
             </Tab.Navigator>
