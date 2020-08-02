@@ -1,78 +1,108 @@
 import React from 'react'
-import {View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Button} from 'react-native'
-import {CheckBox} from 'react-native-elements'
+import {View, Text, StyleSheet, ScrollView, TextInput, Button} from 'react-native'
 import {ThemeImage} from "../ThemeImage";
-import {FontAwesome, FontAwesome5} from '@expo/vector-icons';
+import * as Yup from "yup";
+import {MyCheckbox} from "../common/Forms";
+import {Formik} from "formik";
 
-export const CreateAndEdit = ({
-                                  theme, title, setTitle, text, setText, complete,
-                                  favorite, setFavorite, urgent, setUrgent, errorText, errorTitle
-                              }) => {
-
+export const CreateAndEdit = ({theme, complete, editTodoData}) => {
     return (
         <View style={{backgroundColor: 'white'}}>
             <ThemeImage theme={theme}/>
             <ScrollView style={styles.wrap}>
-                <View style={styles.container}>
-                    <Text style={{...styles.title, color: theme.textColor}}>
-                        Заголовок
-                    </Text>
-                    {errorTitle && <Text style={{color: 'red'}}>
-                        {errorTitle}
-                    </Text>}
-                    <TextInput value={title} onChangeText={title => setTitle(title)}
-                               placeholder='Заголовок дела...'
-                               style={{...styles.input, color: theme.textColor, borderBottomColor: theme.textColor}}/>
-                </View>
-                <View style={styles.container}>
-                    <Text style={{...styles.title, color: theme.textColor}}>
-                        Описание
-                    </Text>
-                    {errorText && <Text style={{color: 'red'}}>
-                        {errorText}
-                    </Text>}
-                    <TextInput multiline value={text} onChangeText={text => setText(text)}
-                               numberOfLines={5}
-                               placeholder='Описание дела...'
-                               style={{
-                                   ...styles.textArea,
-                                   color: theme.textColor,
-                                   borderBottomColor: theme.textColor
-                               }}/>
-                </View>
-                <View style={styles.container}>
-                    <Text style={{...styles.title, color: theme.textColor, marginBottom: 20}}>
-                        Действия
-                    </Text>
-                    <TouchableOpacity onPress={() => setFavorite(!favorite)} style={{...styles.action}}>
+                <Formik
+                    initialValues={{
+                        title: editTodoData ? editTodoData.title : '',
+                        text: editTodoData ? editTodoData.text : '',
+                        favorite: editTodoData ? editTodoData.favorite : false,
+                        urgent: editTodoData ? editTodoData.urgent : false
+                    }}
+                    validationSchema={Yup.object({
+                        title: Yup.string()
+                            .trim('Заголовок должен содержать символы')
+                            .max(50, 'Максимальная длина заголовка 50 символов')
+                            .required('Обязательное поле'),
+                        text: Yup.string()
+                            .trim('Описание должен содержать символы')
+                            .max(300, 'Максимальная длина описания 300 символов')
+                            .required('Обязательное поле')
+                    })}
+                    onSubmit={async (values, {setSubmitting}) => {
+                        try {
+                            const todo = {
+                                ...editTodoData,
+                                title: values.title,
+                                text: values.text,
+                                favorite: values.favorite,
+                                urgent: values.urgent
+                            }
+                            complete(todo)
+                        } catch (error) {
+                            console.log(error)
+                        } finally {
+                            setSubmitting(false);
+                        }
+                    }
+                    }
+                >
+                    {({handleChange, setFieldValue, handleBlur, handleSubmit, values, touched, errors}) => (
                         <View>
+                            <View style={styles.container}>
+                                <Text style={{...styles.title, color: theme.textColor}}>
+                                    Заголовок
+                                </Text>
+                                {errors.title && touched.title &&
+                                <Text style={{color: 'red'}}>
+                                    {errors.title}
+                                </Text>}
+                                <TextInput value={values.title}
+                                           onBlur={handleBlur('title')}
+                                           placeholder='Заголовок дела...'
+                                           onChangeText={handleChange('title')}
+                                           style={{
+                                               ...styles.input,
+                                               color: theme.textColor,
+                                               borderBottomColor: theme.textColor
+                                           }}/>
+                            </View>
+                            <View style={styles.container}>
+                                <Text style={{...styles.title, color: theme.textColor}}>
+                                    Описание
+                                </Text>
+                                {errors.text && touched.text &&
+                                <Text style={{color: 'red'}}>
+                                    {errors.text}
+                                </Text>}
+                                <TextInput multiline value={values.text}
+                                           onChangeText={handleChange('text')}
+                                           onBlur={handleBlur('text')}
+                                           numberOfLines={5}
+                                           placeholder='Описание дела...'
+                                           style={{
+                                               ...styles.textArea,
+                                               color: theme.textColor,
+                                               borderBottomColor: theme.textColor
+                                           }}/>
+                            </View>
+                            <View style={styles.container}>
+                                <Text style={{...styles.title, color: theme.textColor, marginBottom: 20}}>
+                                    Действия
+                                </Text>
+                                <MyCheckbox name='favorite' text='Избранное' theme={theme}
+                                            onPress={() => setFieldValue('favorite', !values.favorite)}
+                                            icon='star' param={values.favorite}/>
+                                <MyCheckbox name='urgent' text='Срочное' theme={theme}
+                                            onPress={() => setFieldValue('urgent', !values.urgent)}
+                                            icon='fire' param={values.urgent}/>
+                            </View>
+                            <View style={{...styles.container}}>
+                                <Button onPress={handleSubmit} color={theme.textColor} title='ЗАВЕРШИТЬ'/>
+                            </View>
+                        </View>
+                    )}
+                </Formik>
 
-                            <CheckBox onPress={() => setFavorite(!favorite)}
-                                      checkedColor={theme.textColor}
-                                      uncheckedColor={theme.textColor}
-                                      containerStyle={styles.checkbox}
-                                      checked={favorite}/>
-                        </View>
-                        <Text style={{...styles.actionText, color: theme.textColor}}>
-                            <FontAwesome name="star" size={20} color={theme.textColor}/> Избранное
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setUrgent(!urgent)} style={{...styles.action}}>
-                        <View>
-                            <CheckBox onPress={() => setUrgent(!urgent)}
-                                      checkedColor={theme.textColor}
-                                      uncheckedColor={theme.textColor}
-                                      containerStyle={styles.checkbox}
-                                      checked={urgent}/>
-                        </View>
-                        <Text style={{...styles.actionText, color: theme.textColor}}>
-                            <FontAwesome5 name="fire" size={20} color={theme.textColor}/> Срочное
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={{...styles.container}}>
-                    <Button onPress={complete} color={theme.textColor} title='ЗАВЕРШИТЬ'/>
-                </View>
+
             </ScrollView>
         </View>
     )

@@ -1,5 +1,5 @@
 import morning from '../../assets/img/1.png'
-import two from '../../assets/img/2.png'
+import day from '../../assets/img/2.png'
 import evening from '../../assets/img/3.png'
 import night from '../../assets/img/4.png'
 

@@ -1,10 +1,6 @@
 import React from 'react'
 import {Text, SafeAreaView, FlatList, View, Image, StyleSheet, Button, Alert} from 'react-native'
 import {ListItem} from "./ListItem";
-import {AppButtons} from "../AppButtons";
-import {useDispatch} from "react-redux";
-import {getAllTodosList} from "../../redux/actions/app-action";
-import {ThemeImage} from "../ThemeImage";
 
 
 export const List = ({theme, todos, navigation}) => {

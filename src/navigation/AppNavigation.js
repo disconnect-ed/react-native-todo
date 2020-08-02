@@ -1,5 +1,6 @@
 import {createStackNavigator} from "@react-navigation/stack";
 import React from "react";
+import {View, Alert} from 'react-native'
 import {AllTodosScreen} from "../screens/AllTodosScreen";
 import {FavoriteScreen} from "../screens/FavoriteScreen";
 import {UrgentScreen} from "../screens/UrgentScreen";
@@ -7,11 +8,12 @@ import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {FontAwesome5} from "@expo/vector-icons";
 import NavigationContainer from "@react-navigation/native/src/NavigationContainer";
 import {ViewTodoScreen} from "../screens/ViewTodoScreen";
-import {AddTodoButton} from "../components/AddTodoButton";
+import {CustomButton} from "../components/CustomButton";
 import {EditScreen} from "../screens/EditScreen";
 import {CreateScreen} from "../screens/CreateScreen";
 import { CommonActions } from '@react-navigation/native';
 import {SearchScreen} from "../screens/SearchScreen";
+import firebaseConfig from "firebase";
 
 const addTodo = (props) => {
     props.navigation.dispatch(
@@ -29,6 +31,24 @@ const addTodo = (props) => {
     )
     props.navigation.navigate('All')
 
+}
+
+const logout = () => {
+    Alert.alert(
+        "Выйти",
+        "Вы действительно хотите выйти?",
+        [
+            {
+                text: "Нет",
+                style: "cancel"
+            },
+            {
+                text: "Да",
+                onPress: () =>  firebaseConfig.auth().signOut(),
+            },
+        ],
+        { cancelable: false }
+    );
 }
 
 const getTabBarVisibility = (route) => {
@@ -56,7 +76,10 @@ const AllTodosStackScreen = React.memo(function AllTodosStackScreen({...props}) 
         }}>
             <AllTodosStack.Screen options={{
                 title: 'Все дела',
-                headerRight: () => <AddTodoButton onPress={() => props.navigation.navigate('Create')}/>
+                headerRight: () => <View style={{flexDirection: 'row'}}>
+                    <CustomButton name='sign-out-alt' style={{marginRight: 30}} onPress={logout}/>
+                    <CustomButton name='plus' onPress={() => props.navigation.navigate('Create')}/>
+                    </View>
             }} name='AllTodos'>
                 {props => <AllTodosScreen {...props} theme={theme}/>}
             </AllTodosStack.Screen>
@@ -92,23 +115,14 @@ export const FavoriteTodosStackScreen = React.memo(function FavoriteTodosStackSc
         }}>
             <FavoriteTodosStack.Screen options={{
                 title: 'Избранные дела',
-                headerRight: () => <AddTodoButton onPress={() => addTodo(props)}/>
+                headerRight: () => <View style={{flexDirection: 'row'}}>
+                    <CustomButton name='sign-out-alt' style={{marginRight: 30}} onPress={logout}/>
+                    <CustomButton name='plus' onPress={() => props.navigation.navigate('Create')}/>
+                </View>
             }}
                                        name='FavoriteTodos'>
                 {props => <FavoriteScreen {...props} theme={theme}/>}
             </FavoriteTodosStack.Screen>
-            {/*<FavoriteTodosStack.Screen options={{title: 'Просмотр дела'}}*/}
-            {/*                           name='View'>*/}
-            {/*    {props => <ViewTodoScreen {...props} theme={theme}/>}*/}
-            {/*</FavoriteTodosStack.Screen>*/}
-            {/*<FavoriteTodosStack.Screen options={{title: 'Создание дела'}}*/}
-            {/*                           name='Create'>*/}
-            {/*    {props => <CreateAndEditScreen {...props} theme={theme}/>}*/}
-            {/*</FavoriteTodosStack.Screen>*/}
-            {/*<FavoriteTodosStack.Screen options={{title: 'Редактирование дела'}}*/}
-            {/*                           name='Edit'>*/}
-            {/*    {props => <CreateAndEditScreen {...props} theme={theme}/>}*/}
-            {/*</FavoriteTodosStack.Screen>*/}
         </FavoriteTodosStack.Navigator>
     )
 })
@@ -125,13 +139,13 @@ export const UrgentTodosStackScreen = React.memo(function FavoriteTodosStackScre
         }}>
             <UrgentTodosStack.Screen options={{
                 title: 'Срочные дела',
-                headerRight: () => <AddTodoButton onPress={() => addTodo(props)}/>
+                headerRight: () => <View style={{flexDirection: 'row'}}>
+                    <CustomButton name='sign-out-alt' style={{marginRight: 30}} onPress={logout}/>
+                    <CustomButton name='plus' onPress={() => props.navigation.navigate('Create')}/>
+                </View>
             }} name='UrgentTodos'>
                 {props => <UrgentScreen {...props} theme={theme}/>}
             </UrgentTodosStack.Screen>
-            {/*<UrgentTodosStack.Screen options={{title: 'Просмотр дела'}} name='View'>*/}
-            {/*    {props => <ViewTodoScreen {...props} theme={theme}/>}*/}
-            {/*</UrgentTodosStack.Screen>*/}
         </UrgentTodosStack.Navigator>
     )
 })
@@ -178,18 +192,4 @@ export const AppNav = ({theme, ...props}) => {
     )
 }
 
-// const SearchTodosStack = createStackNavigator();
-//
-// export const SearchTodosStackScreen = React.memo(function FavoriteTodosStackScreen({...props}) {
-//     return (
-//         <FavoriteTodosStack.Navigator screenOptions={{
-//             headerStyle: {
-//                 backgroundColor: props.theme.textColor
-//             },
-//             headerTintColor: 'white'
-//         }}>
-//             <FavoriteTodosStack.Screen name='SearchTodos' component={SearchScreen}/>
-//         </FavoriteTodosStack.Navigator>
-//     )
-// })
 

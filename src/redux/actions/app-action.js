@@ -82,15 +82,12 @@ export const updateTodo = (todo) => {
     }
 }
 
-export const addTodo = (title, text, favorite, urgent) => {
+export const addTodo = (todo) => {
     const date = new Date()
     const createDate = `${date.getDate()}.${date.getMonth()}.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
     const newTodo = {
         date: createDate.toString(),
-        title: title,
-        text: text,
-        favorite: favorite,
-        urgent: urgent,
+        ...todo
     }
     return dispatch => {
         appAPI.addTodo(newTodo).then(
