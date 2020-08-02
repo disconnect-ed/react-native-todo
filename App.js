@@ -1,88 +1,36 @@
-import React, {useState, useEffect} from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {
-    AllTodosStackScreen,
-    AppNav
-} from "./src/navigation/AppNavigation";
-import {getTheme} from "./src/utils/methods";
+import React, {useState} from 'react';
 import {AppLoading} from "expo";
-import {Provider} from "react-redux";
-import {store} from "./src/redux/store";
-import {Fetch} from "./src/components/Fetch";
+import * as Font from 'expo-font'
 
+import {MainLayout} from "./src/MainLayout";
+import {TodoState} from "./src/context/todo/TodoState";
+import {ScreenState} from "./src/context/screen/ScreenState";
 
+async function loadApp() {
+    await Font.loadAsync({
+        'roboto-regular': require('./assets/fonts/Roboto-Regular.ttf'),
+        'roboto-bold': require('./assets/fonts/Roboto-Bold.ttf')
+    })
+}
 
 export default function App() {
-
-    const [theme, setTheme] = useState('')
-
-
-
-
     const [isReady, setIsReady] = useState(false)
 
+
     if (!isReady) {
-        return <AppLoading onFinish={() => setIsReady(true)}
-                           startAsync={() => setTheme(getTheme())}
-                           onError={err => console.log(err)}/>
+        return <AppLoading startAsync={loadApp} onError={err => console.log(err)}
+                           onFinish={() => setIsReady(true)} />
     }
 
-    const Tab = createBottomTabNavigator()
+
+
     return (
-        <Provider store={store}>
-            <AppNav theme={theme} />
-            <Fetch/>
-        </Provider>
-    );
+        <ScreenState>
+            <TodoState>
+                <MainLayout/>
+            </TodoState>
+        </ScreenState>
+    )
 }
 
-{/*<NavigationContainer>*/
-}
-{/*    <Stack.Navigator screenOptions={{*/
-}
-{/*        title: 'Все дела',*/
-}
-{/*        headerStyle: {*/
-}
-{/*            backgroundColor: 'lime'*/
-}
-{/*        },*/
-}
-{/*        headerTintColor: '#fff',*/
-}
-{/*    }}*/
-}
-{/*                     initialRouteName="AllTodos">*/
-}
-{/*        <Stack.Screen name="AllTodos"*/
-}
-{/*                      component={AllTodosScreen}*/
-}
-{/*                      initialParams={{id: 111}}*/
-}
-{/*                      options={{*/
-}
-{/*                          headerRight: () => (*/
-}
-{/*                              <Button*/
-}
-{/*                                  onPress={() => alert('This is a button!')}*/
-}
-{/*                                  title="Info"*/
-}
-{/*                                  color="#fff"*/
-}
-{/*                              />*/
-}
-{/*                          )*/
-}
-{/*                      }}*/
-}
-{/*        />*/
-}
-{/*        <Stack.Screen name="Favorite" component={FavoriteScreen} options={{title: 'Избранные дела'}}/>*/
-}
-{/*    </Stack.Navigator>*/
-}
-{/*</NavigationContainer>*/
-}
+
